@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sucursales vs huracanes</title>
+  <meta name="description" content="Exposición de las sucursales Banamex a los huracanes activos (NOAA / GDACS), con ranking por cercanía e intensidad.">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Sucursales vs huracanes</h1>
+      <span id="estado-fuente" class="pill">Cargando…</span>
+    </div>
+    <div class="acciones">
+      <button id="btn-actualizar" type="button" title="Volver a consultar las tormentas activas">Actualizar</button>
+      <a id="lnk-zoom" class="boton" href="https://zoom.earth/" target="_blank" rel="noopener">Abrir zoom.earth en esta vista ↗</a>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <section class="kpis" aria-label="Resumen">
+        <div class="kpi alta"><span id="kpi-alta">0</span><small>Exposición alta</small></div>
+        <div class="kpi media"><span id="kpi-media">0</span><small>Media</small></div>
+        <div class="kpi baja"><span id="kpi-baja">0</span><small>Baja</small></div>
+        <div class="kpi"><span id="kpi-tormentas">0</span><small>Tormentas</small></div>
+      </section>
+
+      <section class="bloque">
+        <h2>Tormentas</h2>
+        <ul id="lista-tormentas" class="tormentas"><li class="vacio">Consultando NOAA…</li></ul>
+        <div class="fila-botones">
+          <select id="sel-ejemplo" aria-label="Cargar un ejemplo histórico">
+            <option value="">Ejemplo histórico…</option>
+            <option value="otis">Otis 2023 (Acapulco)</option>
+            <option value="beryl">Beryl 2024 (Yucatán)</option>
+          </select>
+          <button id="btn-simular" type="button" title="Haz clic en el mapa para colocar un huracán hipotético">Simular en el mapa</button>
+          <label class="boton archivo" title="GeoJSON con cono (polígonos), trayectoria (líneas) y/o puntos de pronóstico">
+            Cargar GeoJSON<input id="inp-geojson" type="file" accept=".json,.geojson,application/geo+json,application/json" hidden>
+          </label>
+        </div>
+        <div id="cfg-simulacion" class="cfg-sim" hidden>
+          <label>Categoría
+            <select id="sim-cat">
+              <option value="45">Tormenta tropical</option>
+              <option value="75">Cat. 1</option>
+              <option value="90">Cat. 2</option>
+              <option value="105" selected>Cat. 3</option>
+              <option value="125">Cat. 4</option>
+              <option value="145">Cat. 5</option>
+            </select>
+          </label>
+          <label>Radio <input id="sim-radio" type="number" min="20" max="600" step="10" value="150"> km</label>
+          <span class="ayuda">Haz clic en el mapa para colocarlo.</span>
+        </div>
+      </section>
+
+      <section class="bloque">
+        <h2>Parámetros</h2>
+        <label class="rango">Radio de influencia: <strong id="lbl-radio">250 km</strong>
+          <input id="rng-radio" type="range" min="50" max="800" step="25" value="250">
+        </label>
+      </section>
+
+      <section class="bloque">
+        <h2>Estados más expuestos</h2>
+        <ol id="lista-estados" class="estados"><li class="vacio">Sin sucursales expuestas.</li></ol>
+      </section>
+
+      <section class="bloque ranking">
+        <div class="ranking-cabecera">
+          <h2>Ranking de sucursales</h2>
+          <button id="btn-csv" type="button">Exportar CSV</button>
+        </div>
+        <div class="filtros">
+          <input id="inp-buscar" type="search" placeholder="Buscar sucursal o ciudad" aria-label="Buscar">
+          <select id="sel-estado" aria-label="Filtrar por estado"><option value="">Todos los estados</option></select>
+          <label class="check"><input id="chk-solo" type="checkbox" checked> Solo expuestas</label>
+        </div>
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Sucursal</th><th>Tormenta</th><th class="num">Dist.</th><th class="num">Índice</th></tr>
+            </thead>
+            <tbody id="tbody-ranking"></tbody>
+          </table>
+        </div>
+        <p id="txt-conteo" class="ayuda"></p>
+      </section>
+
+      <footer class="nota">
+        Datos de tormentas: <a href="https://www.nhc.noaa.gov/gis/" target="_blank" rel="noopener">NOAA NHC</a>
+        (respaldo: <a href="https://www.gdacs.org/" target="_blank" rel="noopener">GDACS</a>).
+        El índice combina cercanía a la trayectoria, si la sucursal queda dentro del cono de pronóstico y el viento máximo
+        cercano. Es una referencia, no un pronóstico oficial.
+      </footer>
+    </aside>
+
+    <section class="mapa-wrap">
+      <div id="mapa" aria-label="Mapa de sucursales y tormentas"></div>
+      <div class="leyenda">
+        <span><i class="dot alta"></i>Alta</span>
+        <span><i class="dot media"></i>Media</span>
+        <span><i class="dot baja"></i>Baja</span>
+        <span><i class="dot sin"></i>Sin exposición</span>
+        <span><i class="cono"></i>Cono de pronóstico</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
