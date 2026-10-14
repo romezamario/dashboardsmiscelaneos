@@ -1,0 +1,8 @@
+// Configuración para publicar el sitio estático en Cloudflare Workers (npx wrangler deploy).
+{
+  "name": "dashboardsmiscelaneos",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./"
+  }
+}
